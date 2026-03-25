@@ -17,7 +17,11 @@ async function syncFromFirebase() {
     const res = await fetch(`${FIREBASE_DB_URL}/edulab.json`);
     if (!res.ok) return;
     const data = await res.json();
-    if (!data) return;
+    if (!data) {
+      // Firebase가 비어 있으면 현재 데이터를 업로드 (최초 1회)
+      saveToFirebase();
+      return;
+    }
     if (Array.isArray(data.services)) {
       STATE.services = data.services;
       localStorage.setItem('edulab_services', JSON.stringify(data.services));
