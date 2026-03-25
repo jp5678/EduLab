@@ -394,12 +394,22 @@ function openModal(id) { document.getElementById(id).style.display = 'flex'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
 document.querySelectorAll('.modal-close, [data-modal]').forEach(el => {
-  el.addEventListener('click', () => {
+  el.addEventListener('click', e => {
+    e.stopPropagation();
     const id = el.dataset.modal || el.closest('.modal-overlay')?.id;
     if (id) closeModal(id);
   });
 });
-// 모달 외부 클릭으로 닫히지 않음 (실수 방지)
+
+// 모달 외부(오버레이) 클릭 시 닫히지 않도록 명시적 차단
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { e.stopPropagation(); });
+});
+
+// 모달 내부 클릭이 오버레이로 전파되지 않도록 차단
+document.querySelectorAll('.modal').forEach(modal => {
+  modal.addEventListener('click', e => { e.stopPropagation(); });
+});
 
 // ─── Utilities ───────────────────────────────────────────────────────────────
 function esc(str) {
