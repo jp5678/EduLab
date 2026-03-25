@@ -399,9 +399,7 @@ document.querySelectorAll('.modal-close, [data-modal]').forEach(el => {
     if (id) closeModal(id);
   });
 });
-document.querySelectorAll('.modal-overlay').forEach(overlay =>
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); })
-);
+// 모달 외부 클릭으로 닫히지 않음 (실수 방지)
 
 // ─── Utilities ───────────────────────────────────────────────────────────────
 function esc(str) {
