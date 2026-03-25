@@ -10,10 +10,44 @@ const STATE = {
   isAdmin: false,
 };
 
+// ─── Firebase 동기화 ──────────────────────────────────────────────────────────
+async function syncFromFirebase() {
+  if (!FIREBASE_DB_URL) return;
+  try {
+    const res = await fetch(`${FIREBASE_DB_URL}/edulab.json`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data) return;
+    if (Array.isArray(data.services)) {
+      STATE.services = data.services;
+      localStorage.setItem('edulab_services', JSON.stringify(data.services));
+    }
+    if (Array.isArray(data.notices)) {
+      STATE.notices = data.notices;
+      localStorage.setItem('edulab_notices', JSON.stringify(data.notices));
+    }
+    if (Array.isArray(data.qna)) {
+      STATE.qna = data.qna;
+      localStorage.setItem('edulab_qna', JSON.stringify(data.qna));
+    }
+  } catch(e) {
+    console.warn('Firebase 동기화 실패, localStorage 사용:', e);
+  }
+}
+
+function saveToFirebase() {
+  if (!FIREBASE_DB_URL) return;
+  fetch(`${FIREBASE_DB_URL}/edulab.json`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ services: STATE.services, notices: STATE.notices, qna: STATE.qna }),
+  }).catch(() => {});
+}
+
 const save = {
-  services: () => localStorage.setItem('edulab_services', JSON.stringify(STATE.services)),
-  notices:  () => localStorage.setItem('edulab_notices',  JSON.stringify(STATE.notices)),
-  qna:      () => localStorage.setItem('edulab_qna',      JSON.stringify(STATE.qna)),
+  services: () => { localStorage.setItem('edulab_services', JSON.stringify(STATE.services)); saveToFirebase(); },
+  notices:  () => { localStorage.setItem('edulab_notices',  JSON.stringify(STATE.notices));  saveToFirebase(); },
+  qna:      () => { localStorage.setItem('edulab_qna',      JSON.stringify(STATE.qna));      saveToFirebase(); },
 };
 
 // ─── Admin Auth ──────────────────────────────────────────────────────────────
@@ -380,6 +414,9 @@ function showToast(msg) {
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
-renderServices();
-renderNotices();
-renderQna();
+(async () => {
+  await syncFromFirebase(); // Firebase 설정 시 최신 데이터 로드
+  renderServices();
+  renderNotices();
+  renderQna();
+})();

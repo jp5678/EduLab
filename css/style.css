@@ -370,7 +370,7 @@ ul { list-style: none; }
 .card-desc {
   font-size: .8rem; color: var(--gray-500); line-height: 1.6;
   overflow: hidden;
-  display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
 }
 .card-footer {
   padding: 6px 16px 14px;

@@ -1,6 +1,16 @@
 // ─── Admin Password ───────────────────────────────────────────────────────────
 const ADMIN_PASSWORD = 'jeffrey7254';
 
+// ─── Firebase 설정 ────────────────────────────────────────────────────────────
+// ★ Firebase 연동 방법 (무료, 5분 설정):
+//   1. https://console.firebase.google.com → "프로젝트 추가"
+//   2. Realtime Database → "데이터베이스 만들기" → "테스트 모드로 시작"
+//   3. 생성된 URL (예: https://my-project-default-rtdb.firebaseio.com) 아래에 붙여넣기
+//   4. 저장 후 새로고침 → 이제 모든 기기에서 같은 데이터가 보입니다!
+// ★ 설정하지 않으면 기존 localStorage 방식으로 작동합니다.
+const FIREBASE_DB_URL = '';
+// 예시: const FIREBASE_DB_URL = 'https://jeffreys-edulab-default-rtdb.firebaseio.com';
+
 // ─── Default Data ────────────────────────────────────────────────────────────
 const DEFAULT_SERVICES = [
   { id: 's1', emoji: '🧠', title: 'AI 퀴즈 생성기', desc: '강의 내용을 입력하면 자동으로 O/X, 객관식 퀴즈를 생성합니다.', url: '#' },
