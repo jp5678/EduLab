@@ -8,7 +8,7 @@ const ADMIN_PASSWORD = 'jeffrey7254';
 //   3. 생성된 URL (예: https://my-project-default-rtdb.firebaseio.com) 아래에 붙여넣기
 //   4. 저장 후 새로고침 → 이제 모든 기기에서 같은 데이터가 보입니다!
 // ★ 설정하지 않으면 기존 localStorage 방식으로 작동합니다.
-const FIREBASE_DB_URL = '';
+const FIREBASE_DB_URL = 'https://plenary-network-241120-default-rtdb.asia-southeast1.firebasedatabase.app/';
 // 예시: const FIREBASE_DB_URL = 'https://jeffreys-edulab-default-rtdb.firebaseio.com';
 
 // ─── Default Data ────────────────────────────────────────────────────────────
