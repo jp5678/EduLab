@@ -46,10 +46,8 @@ ul { list-style: none; }
 /* ─── Navbar ─── */
 .navbar {
   position: sticky; top: 0; z-index: 200;
-  background: rgba(255,255,255,.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--gray-200);
-  box-shadow: var(--shadow-xs);
+  background: linear-gradient(135deg, #2d2fa8 0%, #4345d4 45%, #0ea5c9 100%);
+  box-shadow: 0 2px 12px rgba(45,47,168,.25);
 }
 .nav-inner {
   max-width: 1140px; margin: 0 auto;
@@ -59,21 +57,21 @@ ul { list-style: none; }
 .nav-logo { display: flex; align-items: center; gap: 9px; }
 .logo-icon { font-size: 1.35rem; }
 .logo-text {
-  font-size: 1.05rem; font-weight: 700; color: var(--gray-800);
+  font-size: 1.05rem; font-weight: 700; color: #fff;
   letter-spacing: -.01em;
 }
-.logo-text strong { color: var(--primary); }
+.logo-text strong { color: #a5f3fc; }
 
 .nav-links { display: flex; gap: 2px; }
 .nav-link {
   padding: 7px 16px; border-radius: 999px;
-  font-size: .875rem; font-weight: 500; color: var(--gray-500);
+  font-size: .875rem; font-weight: 500; color: rgba(255,255,255,.8);
   transition: background var(--transition), color var(--transition);
   white-space: nowrap;
 }
-.nav-link:hover { background: var(--gray-100); color: var(--gray-800); }
+.nav-link:hover { background: rgba(255,255,255,.15); color: #fff; }
 .nav-link.active {
-  background: var(--primary-light); color: var(--primary); font-weight: 700;
+  background: rgba(255,255,255,.22); color: #fff; font-weight: 700;
 }
 .admin-lock-btn {
   background: none; border: none; cursor: pointer;
