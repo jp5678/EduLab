@@ -162,7 +162,7 @@ function renderServices() {
 // Add service
 document.getElementById('addServiceBtn').addEventListener('click', () => {
   STATE.editingServiceId = null;
-  document.getElementById('serviceModalTitle').textContent = 'AI 서비스 추가';
+  document.getElementById('serviceModalTitle').textContent = '교육활동 지원 추가';
   clearServiceForm();
   openModal('serviceModal');
 });
@@ -171,7 +171,7 @@ function openEditService(id) {
   const s = STATE.services.find(x => x.id === id);
   if (!s) return;
   STATE.editingServiceId = id;
-  document.getElementById('serviceModalTitle').textContent = 'AI 서비스 수정';
+  document.getElementById('serviceModalTitle').textContent = '교육활동 지원 수정';
   document.getElementById('svcTitle').value = s.title;
   document.getElementById('svcDesc').value  = s.desc;
   document.getElementById('svcUrl').value   = s.url === '#' ? '' : s.url;

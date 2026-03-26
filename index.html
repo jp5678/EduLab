@@ -18,9 +18,9 @@
       <span class="logo-text">Jeffrey's <strong>EduLab</strong></span>
     </a>
     <ul class="nav-links" id="navLinks">
-      <li><a href="#services" class="nav-link">AI 서비스</a></li>
       <li><a href="#notices" class="nav-link">공지사항</a></li>
       <li><a href="#qna" class="nav-link">Q&amp;A</a></li>
+      <li><a href="#services" class="nav-link">교육활동 지원</a></li>
     </ul>
     <button class="admin-lock-btn" id="adminLockBtn" title="관리자 로그인">🔒</button>
     <button class="hamburger" id="hamburger" aria-label="메뉴 열기">
@@ -65,19 +65,8 @@
 <!-- ───────────────── PAGE WRAP ───────────────── -->
 <main class="page-wrap">
 
-<!-- ───────────────── SERVICES ───────────────── -->
-<section class="section" id="services">
-  <div class="container">
-    <div class="section-header">
-      <h2 class="section-title">AI 서비스</h2>
-      <button class="btn btn-primary btn-sm admin-only" id="addServiceBtn" style="display:none">+ 추가</button>
-    </div>
-    <div class="services-grid" id="servicesGrid"></div>
-  </div>
-</section>
-
 <!-- ───────────────── NOTICES ───────────────── -->
-<section class="section section-alt" id="notices">
+<section class="section" id="notices">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">공지사항</h2>
@@ -88,7 +77,7 @@
 </section>
 
 <!-- ───────────────── Q&A ───────────────── -->
-<section class="section" id="qna">
+<section class="section section-alt" id="qna">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">Q&amp;A</h2>
@@ -102,6 +91,17 @@
       <button class="btn btn-primary btn-sm" id="qnaSubmit">등록</button>
     </div>
     <div class="qna-list" id="qnaList"></div>
+  </div>
+</section>
+
+<!-- ───────────────── SERVICES ───────────────── -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">교육활동 지원</h2>
+      <button class="btn btn-primary btn-sm admin-only" id="addServiceBtn" style="display:none">+ 추가</button>
+    </div>
+    <div class="services-grid" id="servicesGrid"></div>
   </div>
 </section>
 
@@ -147,7 +147,7 @@
 <div class="modal-overlay" id="serviceModal" style="display:none">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="serviceModalTitle">AI 서비스 추가</h3>
+      <h3 id="serviceModalTitle">교육활동 지원 추가</h3>
       <button class="modal-close" data-modal="serviceModal">✕</button>
     </div>
     <div class="modal-body">
