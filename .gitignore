@@ -1,0 +1,6 @@
+.DS_Store
+*.local
+node_modules/
+.claude/
+.gemini/
+docs/

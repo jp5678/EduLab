@@ -1,8 +1,8 @@
 // ─── Admin Password ───────────────────────────────────────────────────────────
-const ADMIN_PASSWORD = 'jeffrey7254';
+const ADMIN_PASSWORD = '7254';
 
 // ─── Firebase 설정 ────────────────────────────────────────────────────────────
-const FIREBASE_DB_URL = 'https://plenary-network-241120-default-rtdb.asia-southeast1.firebasedatabase.app/';
+const FIREBASE_DB_URL = 'https://plenary-network-241120-default-rtdb.asia-southeast1.firebasedatabase.app';
 
 // ─── Default Data ────────────────────────────────────────────────────────────
 const DEFAULT_SERVICES = [

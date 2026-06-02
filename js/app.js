@@ -9,7 +9,8 @@ const STATE = {
 async function syncFromFirebase() {
   if (!FIREBASE_DB_URL) return;
   try {
-    const res = await fetch(`${FIREBASE_DB_URL}/edulab.json`);
+    const baseUrl = FIREBASE_DB_URL.replace(/\/$/, '');
+    const res = await fetch(`${baseUrl}/edulab.json`);
     if (!res.ok) return;
     const data = await res.json();
     if (!data) { saveToFirebase(); return; }
@@ -24,7 +25,8 @@ async function syncFromFirebase() {
 
 function saveToFirebase() {
   if (!FIREBASE_DB_URL) return;
-  fetch(`${FIREBASE_DB_URL}/edulab.json`, {
+  const baseUrl = FIREBASE_DB_URL.replace(/\/$/, '');
+  fetch(`${baseUrl}/edulab.json`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ services: STATE.services }),
@@ -93,7 +95,8 @@ function renderServices() {
     <div class="service-card" data-id="${s.id}">
       <div class="card-color-bar"></div>
       <div class="card-body">
-        <div class="card-row">
+        <div class="card-header-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <div class="card-emoji" style="font-size: 1.6rem; line-height: 1;">${esc(s.emoji || '🤖')}</div>
           ${STATE.isAdmin ? `<div class="card-actions-row">
             <button class="card-icon-btn svc-edit" data-id="${s.id}" title="수정">✏️</button>
             <button class="card-icon-btn danger svc-del" data-id="${s.id}" title="삭제">🗑️</button>
