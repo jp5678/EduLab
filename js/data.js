@@ -1,8 +1,9 @@
 // ─── Admin Password ───────────────────────────────────────────────────────────
-const ADMIN_PASSWORD = '7254';
+const ADMIN_PASSWORD = '7254'; // Firebase Auth 실패 시 fallback용 비밀번호
 
 // ─── Firebase 설정 ────────────────────────────────────────────────────────────
 const FIREBASE_DB_URL = 'https://plenary-network-241120-default-rtdb.asia-southeast1.firebasedatabase.app';
+const FIREBASE_API_KEY = 'YOUR_FIREBASE_WEB_API_KEY'; // Firebase 콘솔에서 발급받은 Web API Key를 입력하세요.
 
 // ─── Default Data ────────────────────────────────────────────────────────────
 const DEFAULT_SERVICES = [

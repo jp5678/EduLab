@@ -26,7 +26,8 @@ async function syncFromFirebase() {
 function saveToFirebase() {
   if (!FIREBASE_DB_URL) return;
   const baseUrl = FIREBASE_DB_URL.replace(/\/$/, '');
-  fetch(`${baseUrl}/edulab.json`, {
+  const url = STATE.idToken ? `${baseUrl}/edulab.json?auth=${STATE.idToken}` : `${baseUrl}/edulab.json`;
+  fetch(url, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ services: STATE.services }),
@@ -58,17 +59,62 @@ document.getElementById('adminLockBtn').addEventListener('click', () => {
   }
 });
 
-document.getElementById('adminLoginBtn').addEventListener('click', () => {
+document.getElementById('adminLoginBtn').addEventListener('click', async () => {
   const pw = document.getElementById('adminPwInput').value;
-  if (pw === ADMIN_PASSWORD) {
-    STATE.isAdmin = true;
-    closeModal('adminModal');
-    updateAdminUI();
-    showToast('관리자 모드 활성화 🔓');
+  const isFirebaseEnabled = typeof FIREBASE_API_KEY !== 'undefined' && FIREBASE_API_KEY && FIREBASE_API_KEY !== 'YOUR_FIREBASE_WEB_API_KEY';
+
+  if (isFirebaseEnabled) {
+    const loginBtn = document.getElementById('adminLoginBtn');
+    const originalText = loginBtn.textContent;
+    loginBtn.textContent = '인증 중...';
+    loginBtn.disabled = true;
+
+    try {
+      const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'jp5678@gmail.com',
+          password: pw,
+          returnSecureToken: true
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.idToken) {
+        STATE.isAdmin = true;
+        STATE.idToken = data.idToken;
+        closeModal('adminModal');
+        updateAdminUI();
+        showToast('관리자 모드 활성화 (Firebase Auth) 🔓');
+      } else {
+        const errorMsg = data.error?.message;
+        if (errorMsg === 'INVALID_PASSWORD' || errorMsg === 'EMAIL_NOT_FOUND') {
+          showToast('비밀번호가 올바르지 않습니다. ❌');
+        } else {
+          showToast(`인증 실패: ${errorMsg || '알 수 없는 오류'} ❌`);
+        }
+        document.getElementById('adminPwInput').value = '';
+        document.getElementById('adminPwInput').focus();
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('네트워크 오류가 발생했습니다. ❌');
+    } finally {
+      loginBtn.textContent = originalText;
+      loginBtn.disabled = false;
+    }
   } else {
-    showToast('비밀번호가 올바르지 않습니다. ❌');
-    document.getElementById('adminPwInput').value = '';
-    document.getElementById('adminPwInput').focus();
+    if (pw === ADMIN_PASSWORD) {
+      STATE.isAdmin = true;
+      closeModal('adminModal');
+      updateAdminUI();
+      showToast('관리자 모드 활성화 (로컬 Fallback) 🔓');
+    } else {
+      showToast('비밀번호가 올바르지 않습니다. ❌');
+      document.getElementById('adminPwInput').value = '';
+      document.getElementById('adminPwInput').focus();
+    }
   }
 });
 
