@@ -3,7 +3,15 @@ const ADMIN_PASSWORD = '7254'; // Firebase Auth 실패 시 fallback용 비밀번
 
 // ─── Firebase 설정 ────────────────────────────────────────────────────────────
 const FIREBASE_DB_URL = 'https://plenary-network-241120-default-rtdb.asia-southeast1.firebasedatabase.app';
-const FIREBASE_API_KEY = 'YOUR_FIREBASE_WEB_API_KEY'; // Firebase 콘솔에서 발급받은 Web API Key를 입력하세요.
+
+// 💡 파이어베이스 원격 저장소에 카드를 직접 추가/수정/삭제하려면 아래 두 방법 중 하나를 선택하세요:
+//
+// [방법 A] 파이어베이스 콘솔 -> Realtime Database -> 규칙(Rules) 탭에서 ".write": true 로 규칙 개방 (로그인 토큰 없이 즉시 저장 가능)
+//         예: { "rules": { ".read": true, ".write": true } }
+//
+// [방법 B] 파이어베이스 콘솔 -> 프로젝트 설정 -> '웹 API 키'를 아래 YOUR_FIREBASE_WEB_API_KEY 대신 넣어주세요.
+//         (그 후 Firebase Authentication 메뉴에서 jp5678@gmail.com 계정을 생성하고 관리자 로그인 시 해당 패스워드를 사용합니다.)
+const FIREBASE_API_KEY = 'YOUR_FIREBASE_WEB_API_KEY';
 
 // ─── Default Data ────────────────────────────────────────────────────────────
 const DEFAULT_SERVICES = [
