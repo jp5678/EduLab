@@ -8,6 +8,12 @@ const STATE = {
 // ─── Firebase 동기화 ──────────────────────────────────────────────────────────
 async function syncFromFirebase() {
   if (!FIREBASE_DB_URL) return;
+  const isUnsynced = localStorage.getItem('edulab_unsynced') === 'true';
+  const hasLocalData = localStorage.getItem('edulab_services') !== null;
+  if (isUnsynced && hasLocalData) {
+    console.warn('동기화되지 않은 로컬 데이터가 존재하여 Firebase DB 동기화를 건너뜁니다.');
+    return;
+  }
   try {
     const baseUrl = FIREBASE_DB_URL.replace(/\/$/, '');
     const res = await fetch(`${baseUrl}/edulab.json`);
@@ -39,7 +45,16 @@ async function saveToFirebase() {
 }
 
 const save = {
-  services: async () => { localStorage.setItem('edulab_services', JSON.stringify(STATE.services)); await saveToFirebase(); },
+  services: async () => {
+    localStorage.setItem('edulab_services', JSON.stringify(STATE.services));
+    try {
+      await saveToFirebase();
+      localStorage.removeItem('edulab_unsynced');
+    } catch (e) {
+      localStorage.setItem('edulab_unsynced', 'true');
+      throw e;
+    }
+  },
 };
 
 // ─── Admin Auth ──────────────────────────────────────────────────────────────
@@ -178,9 +193,14 @@ function renderServices() {
           showToast('삭제되었습니다.');
         } catch (e) {
           console.error('삭제 실패:', e);
-          STATE.services = originalServices;
-          localStorage.setItem('edulab_services', JSON.stringify(STATE.services));
-          showToast('삭제에 실패했습니다. DB 저장 오류 ❌');
+          if (STATE.idToken) {
+            STATE.services = originalServices;
+            localStorage.setItem('edulab_services', JSON.stringify(STATE.services));
+            showToast('삭제에 실패했습니다. DB 저장 오류 ❌');
+          } else {
+            showToast('로컬에서 임시 삭제되었습니다. ⚠️ (API Key 미등록)');
+            renderServices();
+          }
         }
       }
     })
@@ -236,9 +256,16 @@ document.getElementById('saveServiceBtn').addEventListener('click', async () => 
     clearServiceForm();
   } catch (e) {
     console.error('저장 실패:', e);
-    STATE.services = originalServices;
-    localStorage.setItem('edulab_services', JSON.stringify(STATE.services));
-    showToast('데이터베이스 저장에 실패했습니다. ❌');
+    if (STATE.idToken) {
+      STATE.services = originalServices;
+      localStorage.setItem('edulab_services', JSON.stringify(STATE.services));
+      showToast('데이터베이스 저장에 실패했습니다. ❌ (원복됨)');
+    } else {
+      showToast('로컬에 임시 저장되었습니다. ⚠️ (API Key 미등록)');
+      renderServices();
+      closeModal('serviceModal');
+      clearServiceForm();
+    }
   } finally {
     saveBtn.textContent = originalText;
     saveBtn.disabled = false;
