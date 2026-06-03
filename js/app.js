@@ -11,9 +11,9 @@ async function syncFromFirebase() {
   try {
     const baseUrl = FIREBASE_DB_URL.replace(/\/$/, '');
     const res = await fetch(`${baseUrl}/edulab.json`);
-    if (!res.ok) return;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    if (!data) { saveToFirebase(); return; }
+    if (!data) { await saveToFirebase(); return; }
     if (Array.isArray(data.services)) {
       STATE.services = data.services;
       localStorage.setItem('edulab_services', JSON.stringify(data.services));
@@ -23,19 +23,23 @@ async function syncFromFirebase() {
   }
 }
 
-function saveToFirebase() {
+async function saveToFirebase() {
   if (!FIREBASE_DB_URL) return;
   const baseUrl = FIREBASE_DB_URL.replace(/\/$/, '');
   const url = STATE.idToken ? `${baseUrl}/edulab.json?auth=${STATE.idToken}` : `${baseUrl}/edulab.json`;
-  fetch(url, {
+  const res = await fetch(url, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ services: STATE.services }),
-  }).catch(() => {});
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || `HTTP status ${res.status}`);
+  }
 }
 
 const save = {
-  services: () => { localStorage.setItem('edulab_services', JSON.stringify(STATE.services)); saveToFirebase(); },
+  services: async () => { localStorage.setItem('edulab_services', JSON.stringify(STATE.services)); await saveToFirebase(); },
 };
 
 // ─── Admin Auth ──────────────────────────────────────────────────────────────
@@ -164,10 +168,20 @@ function renderServices() {
     btn.addEventListener('click', () => openEditService(btn.dataset.id))
   );
   grid.querySelectorAll('.svc-del').forEach(btn =>
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       if (confirm('삭제할까요?')) {
+        const originalServices = [...STATE.services];
         STATE.services = STATE.services.filter(s => s.id !== btn.dataset.id);
-        save.services(); renderServices(); showToast('삭제되었습니다.');
+        try {
+          await save.services();
+          renderServices();
+          showToast('삭제되었습니다.');
+        } catch (e) {
+          console.error('삭제 실패:', e);
+          STATE.services = originalServices;
+          localStorage.setItem('edulab_services', JSON.stringify(STATE.services));
+          showToast('삭제에 실패했습니다. DB 저장 오류 ❌');
+        }
       }
     })
   );
@@ -192,23 +206,43 @@ function openEditService(id) {
   openModal('serviceModal');
 }
 
-document.getElementById('saveServiceBtn').addEventListener('click', () => {
+document.getElementById('saveServiceBtn').addEventListener('click', async () => {
   const title = document.getElementById('svcTitle').value.trim();
   const desc  = document.getElementById('svcDesc').value.trim();
   const url   = document.getElementById('svcUrl').value.trim() || '#';
   const emoji = document.getElementById('svcEmoji').value.trim() || '🤖';
   if (!title) { showToast('서비스 이름을 입력해주세요.'); return; }
 
+  const originalServices = [...STATE.services];
+  const saveBtn = document.getElementById('saveServiceBtn');
+  const originalText = saveBtn.textContent;
+
+  saveBtn.textContent = '저장 중...';
+  saveBtn.disabled = true;
+
   if (STATE.editingServiceId) {
     STATE.services = STATE.services.map(s =>
       s.id === STATE.editingServiceId ? { ...s, title, desc, url, emoji } : s
     );
-    showToast('수정되었습니다. ✅');
   } else {
     STATE.services = [{ id: 's' + Date.now(), emoji, title, desc, url }, ...STATE.services];
-    showToast('추가되었습니다! 🎉');
   }
-  save.services(); renderServices(); closeModal('serviceModal'); clearServiceForm();
+
+  try {
+    await save.services();
+    showToast(STATE.editingServiceId ? '수정되었습니다. ✅' : '추가되었습니다! 🎉');
+    renderServices();
+    closeModal('serviceModal');
+    clearServiceForm();
+  } catch (e) {
+    console.error('저장 실패:', e);
+    STATE.services = originalServices;
+    localStorage.setItem('edulab_services', JSON.stringify(STATE.services));
+    showToast('데이터베이스 저장에 실패했습니다. ❌');
+  } finally {
+    saveBtn.textContent = originalText;
+    saveBtn.disabled = false;
+  }
 });
 
 function clearServiceForm() {
